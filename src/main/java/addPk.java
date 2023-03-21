@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /*
  * @Author root
@@ -27,13 +28,17 @@ public class addPk {
                     String sql = "select  table_name from information_schema.columns where  table_schema='public'  group by table_name";
                     preparedStatement = conn.prepareStatement(sql);
                     ResultSet result = preparedStatement.executeQuery();
-                    
+                    CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();
                        while(result.next()){
                            String tablename = result.getString("table_name");
-                           System.out.println(tablename);
+                           list.add(tablename);
                        }
+                    System.out.println("表的数量是："+list.size());
+                    System.out.println("准备添加pk");
+                    String sql2 = "";
 
-//                    CopyOnWriteArrayList<EncryptFace> list = new CopyOnWriteArrayList<EncryptFace>();
+
+//
 //
 //                    System.out.println("list的大小是" + list.size());
 //                    System.out.println("数据库数据获取成功!!!");
