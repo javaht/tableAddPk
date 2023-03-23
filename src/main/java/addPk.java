@@ -1,10 +1,12 @@
 import com.alibaba.druid.pool.DruidDataSource;
 import org.zht.Utils.DruidDSUtil;
 import org.zht.Utils.ThreadPoolUtil;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /*
@@ -54,38 +56,7 @@ public class addPk {
                     //剩下的都是没有主键的表
                     for (int i = 0; i < list.size(); i++) {
                         String tablename = list.get(i);
-                        String uuidSql ="select row_number() over(order by 1) uuid,* from "+tablename+" ";
-                        ResultSet resultSet = conn.prepareStatement(uuidSql).executeQuery();
-
-//                            String truncSql ="truncate table "+tablename+" ";//清空表 然后新增列
-//                            boolean execute = conn.prepareStatement(truncSql).execute();
-//                            if(execute){
-//                                String addSql ="ALTER TABLE "+tablename+" ADD PRIMARY KEY (uuid) ";
-//                                boolean adPK = conn.prepareStatement(addSql).execute();
-//                                if (adPK){
-                                    System.out.println("新增主键成功,开始插入数据到原表");
-
-                                        String columnName = resultSet.getMetaData().getColumnName(i+1);
-                                        String columnType = resultSet.getMetaData().getColumnTypeName(i+1);
-
-                                   switch (columnType){
-                                       case "int8":
-
-
-
-                                   }
-
-
-
-                                        String value = resultSet.getString(columnName);
-                                        String insertSql = "INSERT INTO "+tablename+" VALUES("+value+")";
-
-
-                              //  }
-                            //}
-
-
-
+                        System.out.println("没主键"+tablename);
                     }
                 } catch (SQLException e) {
                     //数据库连接失败异常处理
@@ -101,4 +72,32 @@ public class addPk {
     }
 
 
-}
+    private static List convertList(ResultSet rs) throws SQLException {
+
+        List list = new ArrayList();
+
+        ResultSetMetaData md = rs.getMetaData();
+
+        int columnCount = md.getColumnCount(); //Map rowData;
+
+        while (rs.next()) { //rowData = new HashMap(columnCount);
+
+            Map rowData = new HashMap();
+
+            for (int i = 1; i <= columnCount; i++) {
+
+                rowData.put(md.getColumnName(i), rs.getObject(i));
+
+            }
+
+            list.add(rowData);
+
+        }
+
+        return list;
+    }
+
+
+
+
+    }
