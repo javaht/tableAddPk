@@ -35,7 +35,7 @@ public class addPk {
                 ResultSet checkResult = conn.prepareStatement(checkSql).executeQuery();
                 while(checkResult.next()){
                     if(checkResult.getInt("fg")>0){
-                        System.out.println(tablename+"   有主键了");
+                        System.out.println(tablename+"有主键了");
                         //说明这个表主键,不用设置了
                     }else{
                         //剩下的都是没有主键的表
@@ -46,10 +46,18 @@ public class addPk {
                         String copyTable = " CREATE TABLE "+tablename+" (LIKE "+tableToOld+" INCLUDING ALL); ";
                         conn.prepareStatement(copyTable).execute(); //复制了这张表
                         //给表加一列
-                        String addcolumnSql = " ALTER table "+tablename+" add uuid int4";
+                        String addcolumnSql = " ALTER table "+tablename+" add uuid int8";
                         conn.prepareStatement(addcolumnSql).execute();
                         String setPk ="ALTER TABLE  "+tablename+"  ADD PRIMARY KEY (uuid)";
                         conn.prepareStatement(setPk).execute();
+
+                        //添加自增序列
+                        String autoAdd = " CREATE SEQUENCE IF NOT EXISTS  "+tablename+"_id_seq  START WITH 1  INCREMENT BY 1  NO MINVALUE  NO MAXVALUE   CACHE 1";
+                        conn.prepareStatement(autoAdd).execute();
+                         //设置主键自增
+                        String addsql =" alter table "+tablename+" alter column uuid set default nextval('"+tablename+"_id_seq')";
+                        conn.prepareStatement(addsql).execute();
+
                         //把旧表的数据
                         String insertSql = "insert into "+tablename+" select *,row_number() over() as uuid from( select distinct * from "+tableToOld+" ) n ";
                         conn.prepareStatement(insertSql).execute();

@@ -12,7 +12,7 @@ public class DruidDSUtil {
         // 设置驱动全类名
         druidDataSource.setDriverClassName("org.postgresql.Driver");
         // 设置连接 url
-        druidDataSource.setUrl("jdbc:postgresql://192.168.20.64:5432/cdctest?allowMultiQueries=true&autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false");
+        druidDataSource.setUrl("jdbc:postgresql://10.69.7.11:5432/cdctest?allowMultiQueries=true&autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false");
         druidDataSource.setUsername("postgres");
         druidDataSource.setPassword("123456");
         druidDataSource.setInitialSize(5);
