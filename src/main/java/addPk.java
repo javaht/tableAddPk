@@ -25,7 +25,7 @@ public class addPk {
                 String tablename = list.get(i);
                 String checkSql =
                         " select count(1) fg from(" +
-                                "SELECT  (CASE  WHEN (SELECT COUNT(*) FROM pg_constraint AS PC WHERE b.attnum = PC.conkey[1] AND PC.contype = 'p'  and  PC.conname like concat('"+tablename+"','_%') ) > 0 THEN 'PRI' ELSE '' END)  AS key " +
+                                "SELECT  (CASE  WHEN (SELECT COUNT(*) FROM pg_constraint AS PC WHERE b.attnum = PC.conkey[1] AND PC.contype = 'p'  and  PC.conname = '"+ tablename+ "'||'_pkey' ) > 0 THEN 'PRI' ELSE '' END)  AS key " +
                                 "FROM information_schema.columns AS col " +
                                 "         LEFT JOIN pg_namespace ns ON ns.nspname = col.table_schema " +
                                 "         LEFT JOIN pg_class c ON col.table_name = c.relname AND c.relnamespace = ns.oid " +
