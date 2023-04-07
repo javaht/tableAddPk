@@ -25,7 +25,7 @@ public class addPk {
                 String tablename = list.get(i);
                 String checkSql =
                         " select count(1) fg from(" +
-                                "SELECT  (CASE  WHEN (SELECT COUNT(*) FROM pg_constraint AS PC WHERE b.attnum = PC.conkey[1] AND PC.contype = 'p'  and  PC.conname = '"+ tablename+ "'||'_pkey' ) > 0 THEN 'PRI' ELSE '' END)  AS key " +
+                                "SELECT  (CASE  WHEN (SELECT COUNT(*) FROM pg_constraint AS PC WHERE b.attnum = PC.conkey[1] AND PC.contype = 'p' and PC.conrelid = c.oid ) > 0 THEN 'PRI' ELSE '' END)  AS key " +
                                 "FROM information_schema.columns AS col " +
                                 "         LEFT JOIN pg_namespace ns ON ns.nspname = col.table_schema " +
                                 "         LEFT JOIN pg_class c ON col.table_name = c.relname AND c.relnamespace = ns.oid " +
@@ -50,19 +50,17 @@ public class addPk {
                         conn.prepareStatement(addcolumnSql).execute();
                         String setPk ="ALTER TABLE  "+tablename+"  ADD PRIMARY KEY (uuid)";
                         conn.prepareStatement(setPk).execute();
-
-                        //添加自增序列
-                        String autoAdd = " CREATE SEQUENCE IF NOT EXISTS  "+tablename+"_id_seq  START WITH 1  INCREMENT BY 1  NO MINVALUE  NO MAXVALUE   CACHE 1";
-                        conn.prepareStatement(autoAdd).execute();
-                         //设置主键自增
-                        String addsql =" alter table "+tablename+" alter column uuid set default nextval('"+tablename+"_id_seq')";
-                        conn.prepareStatement(addsql).execute();
-
+//                        //添加自增序列
+//                        String autoAdd = " CREATE SEQUENCE IF NOT EXISTS  "+tablename+"_id_seq  START WITH 1  INCREMENT BY 1  NO MINVALUE  NO MAXVALUE   CACHE 1";
+//                        conn.prepareStatement(autoAdd).execute();
+//                         //设置主键自增
+//                        String addsql =" alter table "+tablename+" alter column uuid set default nextval('"+tablename+"_id_seq')";
+//                        conn.prepareStatement(addsql).execute();
                         //把旧表的数据
                         String insertSql = "insert into "+tablename+" select *,row_number() over() as uuid from( select distinct * from "+tableToOld+" ) n ";
                         conn.prepareStatement(insertSql).execute();
                         conn.commit();
-                        System.out.println(tablename+"设置了主键哦");
+                        System.out.println(tablename+"            没有主键哦");
                     }
 
                 }
